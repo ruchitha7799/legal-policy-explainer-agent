@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>📄 Legal Policy Explainer</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <header>
+    <h1>📄 Legal Policy Explainer</h1>
+    <p>Upload a legal document and get an easy-to-understand summary instantly.</p>
+    <nav>
+      <button onclick="window.location.href='/qa'">💬 Q&A</button>
+      <button onclick="window.location.href='/history'">📜 History</button>
+      <button onclick="window.location.href='/security'">🔒 Security</button>
+    </nav>
+  </header>
+
+  <main>
+    <form id="upload-form">
+      <input type="file" id="file-input" accept=".docx" required />
+      <button type="submit" id="upload-btn">Upload & Explain</button>
+    </form>
+
+    <div id="loading" style="display:none;">Processing document... ⏳</div>
+
+    <section id="result">
+      <h2>📝 Document Summary</h2>
+      <div id="summaryText">Your summary will appear here...</div>
+    </section>
+
+    <section id="translate-section">
+      <h3>🌐 Translate Summary</h3>
+      <select id="language-select">
+        <option value="">Select Language</option>
+        <option value="hi">Hindi</option>
+        <option value="te">Telugu</option>
+        <option value="ta">Tamil</option>
+        <option value="kn">Kannada</option>
+        <option value="bn">Bengali</option>
+      </select>
+      <button id="translate-btn">Translate</button>
+      <div id="translated-text"></div>
+
+      <h3>🔊 Read Aloud</h3>
+      <button id="speak-btn">🎧 Read Aloud</button>
+      <button id="stop-btn">⏹ Stop</button>
+
+    </section>
+  </main>
+
+  <footer>
+    <p>Made with ❤️ using Flask + Gemini AI</p>
+  </footer>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
+

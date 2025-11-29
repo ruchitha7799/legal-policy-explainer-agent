@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🔒 Security Center</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <header>
+    <h1>🔒 Security & Privacy Center</h1>
+    <nav>
+      <button onclick="window.location.href='/'">🏠 Home</button>
+      <button onclick="window.location.href='/qa'">💬 Q&A</button>
+      <button onclick="window.location.href='/history'">📜 History</button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="security-section">
+      <h2>🧠 Your Data Safety</h2>
+      <p>We take privacy very seriously. Here’s how we protect your information:</p>
+      <ul>
+        <li>🧾 Documents are processed <strong>locally and securely</strong> — never stored permanently.</li>
+        <li>🧹 Files are <strong>automatically deleted</strong> after summarization.</li>
+        <li>🛡️ All communication between your browser and server is <strong>encrypted</strong>.</li>
+        <li>🔐 API keys are stored on the server, never exposed to users.</li>
+        <li>👁️‍🗨️ No data is shared with third parties.</li>
+      </ul>
+    </section>
+
+    <section class="security-section">
+      <h2>🧹 Clear My Data</h2>
+      <p>You can delete all temporary uploads, summaries, and session data at any time.</p>
+      <button id="clear-data-btn">🧼 Clear All Data</button>
+      <p id="clear-status" style="margin-top: 10px; color: green;"></p>
+    </section>
+
+    <section class="security-section">
+      <h2>🔑 API Transparency</h2>
+      <p>We use Google Gemini AI for summarization, translation, and question answering.</p>
+      <ul>
+        <li>✅ All requests are made securely through HTTPS.</li>
+        <li>✅ Only minimal, relevant text is sent for processing.</li>
+        <li>✅ You can disable API access anytime via “Clear My Data”.</li>
+      </ul>
+    </section>
+
+    <section class="security-section">
+      <h2>📘 Best Practices</h2>
+      <p>For your safety, please avoid uploading documents that contain sensitive personal or financial details.</p>
+      <p>For confidential legal matters, consult a certified lawyer.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 Legal Policy Explainer | Data handled securely with ❤️</p>
+  </footer>
+
+  <script>
+    document.getElementById('clear-data-btn').addEventListener('click', async () => {
+      if (!confirm("Are you sure you want to permanently delete all data?")) return;
+      document.getElementById('clear-status').textContent = "Clearing data... ⏳";
+
+      const res = await fetch('/clear-data', { method: 'POST' });
+      const data = await res.json();
+      if (res.ok) {
+        document.getElementById('clear-status').textContent = data.message;
+      } else {
+        document.getElementById('clear-status').textContent = "❌ " + (data.error || "Error clearing data");
+      }
+    });
+  </script>
+</body>
+</html>

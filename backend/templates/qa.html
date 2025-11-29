@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>💬 Document Q&A Assistant</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <header>
+    <h1>💬 Legal Q&A Assistant</h1>
+    <p class="subtitle">Ask questions related to your uploaded document — in any Indian language!</p>
+    <nav>
+      <button onclick="window.location.href='/'">🏠 Home</button>
+      <button onclick="window.location.href='/history'">📜 History</button>
+      <button onclick="window.location.href='/security'">🔒 Security</button>
+    </nav>
+  </header>
+
+  <main>
+    <section id="qa-container">
+      <h2>🧠 Ask About Your Document</h2>
+      <p>Type or use your voice to ask questions related to your uploaded document.</p>
+
+      <!-- Question Input -->
+      <div class="qa-input">
+        <textarea id="question" placeholder="Ask your question here..."></textarea>
+        <div class="qa-buttons">
+          <button id="ask-btn">🤔 Ask</button>
+          <button id="voice-btn">🎤 Speak</button>
+        </div>
+      </div>
+
+      <!-- Answer Box -->
+      <div id="answer-box" class="result-box" style="display:none;">
+        <h3>🧾 Answer</h3>
+        <p id="answer">AI is thinking... 💭</p>
+        <div class="voice-controls">
+          <button id="read-answer-btn">🔊 Read Aloud</button>
+          <button id="stop-voice-btn">⏹ Stop</button>
+        </div>
+      </div>
+
+      <!-- Tips Section -->
+      <div class="tips">
+        <h3>💡 Tips</h3>
+        <ul>
+          <li>🎙 You can ask questions in Hindi, Telugu, Tamil, or any Indian language.</li>
+          <li>📄 Make sure you uploaded a document first — the AI uses it for context.</li>
+          <li>🔊 Click "Read Aloud" to hear the answer in a natural voice.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 Legal Policy Explainer | Powered by Gemini AI & Flask</p>
+  </footer>
+
+  <script>
+    const questionInput = document.getElementById('question');
+    const askBtn = document.getElementById('ask-btn');
+    const voiceBtn = document.getElementById('voice-btn');
+    const answerBox = document.getElementById('answer-box');
+    const answerText = document.getElementById('answer');
+    const readBtn = document.getElementById('read-answer-btn');
+    const stopBtn = document.getElementById('stop-voice-btn');
+
+    const synth = window.speechSynthesis;
+    let currentUtterance = null;
+
+    // 🧠 Handle Ask Button
+    askBtn.addEventListener('click', async () => {
+      const question = questionInput.value.trim();
+      if (!question) {
+        alert('Please type a question first.');
+        return;
+      }
+
+      answerBox.style.display = 'block';
+      answerText.textContent = "Thinking... 💭";
+
+      try {
+        const res = await fetch('/qa-answer', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question })
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          answerText.textContent = data.answer;
+          answerBox.style.display = 'block';
+          speakText(data.answer);
+        } else {
+          answerText.textContent = "❌ " + (data.error || 'Unknown error');
+        }
+      } catch (err) {
+        answerText.textContent = "⚠️ Network Error: " + err.message;
+      }
+    });
+
+    // 🎤 Voice Input
+    if ('webkitSpeechRecognition' in window) {
+      const recognition = new webkitSpeechRecognition();
+      recognition.lang = 'en-IN';
+      recognition.continuous = false;
+
+      voiceBtn.addEventListener('click', () => {
+        questionInput.value = "🎙 Listening...";
+        recognition.start();
+      });
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        questionInput.value = transcript;
+      };
+    } else {
+      voiceBtn.disabled = true;
+      voiceBtn.textContent = "🎤 Not Supported";
+    }
+
+    // 🔊 Read Aloud Function
+    function speakText(text) {
+      if (!text) return;
+      stopSpeech();
+      currentUtterance = new SpeechSynthesisUtterance(text);
+      currentUtterance.lang = detectLanguage(text);
+      synth.speak(currentUtterance);
+    }
+
+    // 🛑 Stop Voice
+    function stopSpeech() {
+      if (synth.speaking) synth.cancel();
+      currentUtterance = null;
+    }
+
+    // 🌍 Detect Language Roughly
+    function detectLanguage(text) {
+      if (/[అఆఇఈఉఊ]/.test(text)) return 'te-IN'; // Telugu
+      if (/[அஆஇஈஉ]/.test(text)) return 'ta-IN'; // Tamil
+      if (/[अआइईउऊ]/.test(text)) return 'hi-IN'; // Hindi
+      return 'en-IN';
+    }
+
+    readBtn.addEventListener('click', () => {
+      const text = answerText.textContent;
+      speakText(text);
+    });
+
+    stopBtn.addEventListener('click', stopSpeech);
+  </script>
+</body>
+</html>
+
+

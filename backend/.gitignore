@@ -1,0 +1,23 @@
+# Virtual environments
+.venv/
+venv/
+backend/venv/
+backend/.venv/
+
+# Python cache
+__pycache__/
+backend/__pycache__/
+
+# Audio outputs
+backend/static/tts_output.mp3
+
+# Uploaded files
+backend/uploads/
+uploads/
+
+# History files
+backend/history/
+history/
+
+# VSCode
+.vscode/

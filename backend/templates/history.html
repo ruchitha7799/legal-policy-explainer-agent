@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🕒 Document History</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+</head>
+<body>
+  <header>
+    <h1>📜 History of Your Summaries</h1>
+  </header>
+
+    <main>
+      {% if history_groups %}
+        {% for label, entries in history_groups.items() %}
+          {% if entries %}
+            <section class="history-section">
+              <h2>📅 {{ label }}</h2>
+              <ul>
+                {% for h in entries %}
+                  <li class="history-item">
+                    <h3>📄 {{ h.filename }}</h3>
+                    <p>{{ h.summary }}</p>
+                    <small>🕰 {{ h.timestamp }}</small>
+                  </li>
+                {% endfor %}
+              </ul>
+            </section>
+          {% endif %}
+        {% endfor %}
+      {% else %}
+        <p>🗂 No history yet! Upload a document first.</p>
+      {% endif %}
+    </main>
+<footer>
+  <button onclick="window.location.href='/'">⬅️ Back</button>
+</footer>
+
+<!-- ✅ Script must be here at the end -->
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
+
